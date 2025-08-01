@@ -48,7 +48,8 @@ public class MonteCarloSimulator {
      * Runs the simulation synchronously using optimized parallelism.
      */
     public MonteCarloResult run() throws InterruptedException {
-        try (ForkJoinPool pool = new ForkJoinPool(threads)) {
+        ForkJoinPool pool = new ForkJoinPool(threads);
+        try {
             DoubleAdder totalSum = new DoubleAdder();
             DoubleAdder totalSumSq = new DoubleAdder();
             AtomicLong completed = new AtomicLong(0);
@@ -99,6 +100,8 @@ public class MonteCarloSimulator {
             double mean = totalSum.sum() / totalTrials;
             double variance = (totalSumSq.sum() / totalTrials) - (mean * mean);
             return new MonteCarloResult(mean, variance, totalTrials);
+        } finally {
+            pool.shutdown(); // always shut it down
         }
     }
 
