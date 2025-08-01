@@ -23,9 +23,9 @@ public final class MonteCarloResult {
     /**
      * Constructs a result from the collected statistics.
      *
-     * @param mean the sample mean of all trials
+     * @param mean     the sample mean of all trials
      * @param variance the sample variance of all trial outcomes
-     * @param samples the total number of trials
+     * @param samples  the total number of trials
      */
     public MonteCarloResult(double mean, double variance, long samples) {
         this.mean = mean;

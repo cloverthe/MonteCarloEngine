@@ -19,8 +19,8 @@ public class BirthdayParadoxExperiment implements MonteCarloExperiment {
     /**
      * Creates a new experiment with a given number of people in the group.
      *
-     * @param groupSize   number of people in the group (e.g. 23)
-     * @param daysInYear  number of possible birthdays (typically 365)
+     * @param groupSize  number of people in the group (e.g. 23)
+     * @param daysInYear number of possible birthdays (typically 365)
      */
     public BirthdayParadoxExperiment(int groupSize, int daysInYear) {
         this.groupSize = groupSize;

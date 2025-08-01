@@ -1,6 +1,5 @@
 package org.tclover.montecarlo;
 
-import java.util.Random;
 import java.util.SplittableRandom;
 
 /**
@@ -31,7 +30,6 @@ public class PiEstimationExperiment implements MonteCarloExperiment {
 
     /**
      * Constructs a pi-estimating experiment using a fixed random seed for reproducibility.
-     *
      */
     public PiEstimationExperiment() {
 
