@@ -1,0 +1,63 @@
+# Java build output
+*.class
+*.jar
+*.war
+*.ear
+*.zip
+*.log
+
+# IntelliJ / JetBrains
+.idea/
+*.iml
+*.iws
+out/
+target/
+build/
+
+# Eclipse
+.classpath
+.project
+.settings/
+bin/
+
+# VSCode
+.vscode/
+
+# Maven / Gradle
+.mvn/
+target/
+build/
+dependency-reduced-pom.xml
+*.lock
+!.mvn/wrapper/maven-wrapper.jar
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Logs / Reports / Temporary
+*.log
+*.tmp
+*.swp
+*.bak
+*.orig
+
+# Test coverage / reports
+coverage/
+jacoco.exec
+*.ec
+test-output/
+surefire-reports/
+hs_err_pid*
+
+# IDE auto-saves / backups
+*.sublime-workspace
+*.sublime-project
+
+# Environment files
+.env
+.env.*
+
+# Java REPL (JShell)
+.jsh
+
