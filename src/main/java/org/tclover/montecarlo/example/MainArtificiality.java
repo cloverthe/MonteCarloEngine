@@ -14,7 +14,7 @@ public class MainArtificiality {
 
         ArtificialityDetectionExperiment.CodingMutationSpectrum cmsFlu = new ArtificialityDetectionExperiment.CodingMutationSpectrum(0.21, 0.75, 0.04);
 
-        var experiment = new ArtificialityDetectionExperiment(cmsCovid);
+        var experiment = new ArtificialityDetectionExperiment(cmsFlu);
         var simulator = new MonteCarloSimulator<>(experiment, trials, seed);
         var aggregator = new MeanVarianceAggregator();
 

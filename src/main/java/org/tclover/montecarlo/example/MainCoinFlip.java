@@ -8,7 +8,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class MainCoinFlip {
     public static void main(String[] args) throws Exception {
-        long trials = 1_000_000_000L;
+        long trials = Integer.MAX_VALUE;
         long seed = 1234;
 
         MonteCarloExperiment<Boolean> experiment = new CoinFlipExperiment(0.5);
