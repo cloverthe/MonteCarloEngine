@@ -7,7 +7,7 @@ import org.tclover.montecarlo.experiment.BirthdayParadoxExperiment;
 public class MainBirthday {
     public static void main(String[] args) throws Exception {
         int groupSize = 23;
-        long trials = 1_000_000_000L;
+        long trials = Integer.MAX_VALUE;
         long seed = 42L;
 
         MonteCarloExperiment<Double> experiment = new BirthdayParadoxExperiment(groupSize, 365);

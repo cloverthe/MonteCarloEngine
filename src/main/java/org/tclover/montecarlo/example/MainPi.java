@@ -14,11 +14,9 @@ public class MainPi {
         MonteCarloExperiment<Double> experiment = new PiEstimationExperiment();
         MonteCarloSimulator<Double> simulator = new MonteCarloSimulator<>(experiment, trials, seed);
 
-        // Use an aggregator that computes mean + variance
         MonteCarloAggregator<Double, MeanVarianceSummary> aggregator = new DoubleSummaryAggregator();
 
-        CompletableFuture<MonteCarloResult<MeanVarianceSummary>> futureResult =
-                simulator.runAsync(aggregator);
+        CompletableFuture<MonteCarloResult<MeanVarianceSummary>> futureResult = simulator.runAsync(aggregator);
 
         MonteCarloResult<MeanVarianceSummary> result = futureResult.get();
         MeanVarianceSummary summary = result.getResult();
