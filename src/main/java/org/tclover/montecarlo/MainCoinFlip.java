@@ -10,14 +10,8 @@ public class MainCoinFlip {
         long trials = 1000_000_000;
         long seed = 1234;
 
-        MonteCarloExperiment coin = new CoinFlipExperiment(0.5); // fair coin
-        MonteCarloSimulator simulator = new MonteCarloSimulator(
-                coin,
-                trials,
-                p -> System.out.printf("Progress: %.2f%%%n", p),
-                seed
-        );
-
+        MonteCarloExperiment experiment = new CoinFlipExperiment(0.5);
+        MonteCarloSimulator simulator = new MonteCarloSimulator(experiment, trials, seed);
 
         CompletableFuture<MonteCarloResult> futureResult = simulator.runAsync();
 

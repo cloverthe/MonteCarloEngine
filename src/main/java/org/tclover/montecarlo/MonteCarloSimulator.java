@@ -27,19 +27,17 @@ public class MonteCarloSimulator {
     /**
      * Constructs a simulator using all available processors.
      */
-    public MonteCarloSimulator(MonteCarloExperiment experiment, long totalTrials,
-                               Consumer<Double> progressCallback, long seedBase) {
-        this(experiment, totalTrials, progressCallback, seedBase, Runtime.getRuntime().availableProcessors());
+    public MonteCarloSimulator(MonteCarloExperiment experiment, long totalTrials, long seedBase) {
+        this(experiment, totalTrials, seedBase, Runtime.getRuntime().availableProcessors());
     }
 
     /**
      * Constructs a simulator with a fixed number of threads.
      */
-    public MonteCarloSimulator(MonteCarloExperiment experiment, long totalTrials,
-                               Consumer<Double> progressCallback, long seedBase, int threads) {
+    public MonteCarloSimulator(MonteCarloExperiment experiment, long totalTrials, long seedBase, int threads) {
         this.experiment = experiment;
         this.totalTrials = totalTrials;
-        this.progressCallback = progressCallback;
+        this.progressCallback = null;
         this.seedBase = seedBase;
         this.threads = threads;
     }
@@ -76,14 +74,10 @@ public class MonteCarloSimulator {
                         if ((localCompleted % 100_000) == 0) {
                             long done = completed.addAndGet(100_000);
                             long percent = (done * 100) / totalTrials;
-                            if (progressCallback != null && percent > lastReportedPercent.get()) {
-                                lastReportedPercent.updateAndGet(prev -> {
-                                    if (percent > prev) {
-                                        progressCallback.accept((double) percent);
-                                        return percent;
-                                    }
-                                    return prev;
-                                });
+                            if (percent > lastReportedPercent.get()) {
+                                if (lastReportedPercent.compareAndSet(lastReportedPercent.get(), percent)) {
+                                    reportProgress((double) percent);
+                                }
                             }
                         }
                     }
@@ -99,6 +93,10 @@ public class MonteCarloSimulator {
 
             double mean = totalSum.sum() / totalTrials;
             double variance = (totalSumSq.sum() / totalTrials) - (mean * mean);
+            if (progressCallback == null) {
+                System.out.println();
+            }
+
             return new MonteCarloResult(mean, variance, totalTrials);
         } finally {
             pool.shutdown(); // always shut it down
@@ -117,4 +115,24 @@ public class MonteCarloSimulator {
             }
         });
     }
+
+    private void reportProgress(double progress) {
+        if (progressCallback != null) {
+            progressCallback.accept(progress);
+        } else {
+            int width = 40;
+            int filled = (int) (progress / 100 * width);
+
+            StringBuilder bar = new StringBuilder();
+            bar.append("\rProgress: [");
+            for (int i = 0; i < width; i++) {
+                bar.append(i < filled ? '=' : (i == filled ? '>' : ' '));
+            }
+            bar.append(String.format("] %.2f%%", progress));
+
+            System.out.print(bar);
+            System.out.flush();
+        }
+    }
+
 }

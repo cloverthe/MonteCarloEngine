@@ -6,20 +6,11 @@ package org.tclover.montecarlo;
 public class MainBirthday {
     public static void main(String[] args) throws Exception {
         int groupSize = 23;
-        long trials = 100_000_000;
+        long trials = 1000_000_000;
         long seed = 42L;
-        int threads = Runtime.getRuntime().availableProcessors();
-
 
         MonteCarloExperiment experiment = new BirthdayParadoxExperiment(groupSize, 365);
-
-        MonteCarloSimulator simulator = new MonteCarloSimulator(
-                experiment,
-                trials,
-                progress -> System.out.printf("Progress: %.2f%%%n", progress),
-                seed,
-                threads
-        );
+        MonteCarloSimulator simulator = new MonteCarloSimulator(experiment, trials, seed);
 
         MonteCarloResult result = simulator.run();
         double probability = result.getMean();

@@ -3,24 +3,15 @@ package org.tclover.montecarlo;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Estimates the value of π using a Monte Carlo simulation,
- * taking full advantage of a multi-core CPU.
+ * Estimates the value of π using a Monte Carlo simulation.
  */
 public class MainPi {
     public static void main(String[] args) throws Exception {
-        long trials = 1000_000_000;
+        long trials = Integer.MAX_VALUE;
         long seed = 1234;
-        int threads = Runtime.getRuntime().availableProcessors();
 
         MonteCarloExperiment experiment = new PiEstimationExperiment();
-
-        MonteCarloSimulator simulator = new MonteCarloSimulator(
-                experiment,
-                trials,
-                progress -> System.out.printf("Progress: %.2f%%%n", progress),
-                seed,
-                threads
-        );
+        MonteCarloSimulator simulator = new MonteCarloSimulator(experiment, trials, seed);
 
         CompletableFuture<MonteCarloResult> futureResult = simulator.runAsync();
 
