@@ -9,7 +9,7 @@ import java.util.concurrent.CompletableFuture;
 public class MainPi {
     public static void main(String[] args) throws Exception {
         long trials = Integer.MAX_VALUE;
-        long seed = 1234;
+        long seed = 42L;
 
         MonteCarloExperiment<Double> experiment = new PiEstimationExperiment();
         MonteCarloSimulator<Double> simulator = new MonteCarloSimulator<>(experiment, trials, seed);
