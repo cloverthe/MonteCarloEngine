@@ -1,4 +1,6 @@
-package org.tclover.montecarlo;
+package org.tclover.montecarlo.experiment;
+
+import org.tclover.montecarlo.core.MonteCarloExperiment;
 
 import java.util.SplittableRandom;
 
@@ -25,7 +27,7 @@ import java.util.SplittableRandom;
  * The Monte Carlo simulator will compute the average of many such trials, which converges to π/4.
  * </p>
  */
-public class PiEstimationExperiment implements MonteCarloExperiment {
+public class PiEstimationExperiment implements MonteCarloExperiment<Double> {
 
 
     /**
@@ -42,7 +44,7 @@ public class PiEstimationExperiment implements MonteCarloExperiment {
      * @return 1.0 if the point is inside the circle (a "hit"), 0.0 otherwise
      */
     @Override
-    public double runTrial(SplittableRandom rnd) {
+    public Double runTrial(SplittableRandom rnd) {
         double x = rnd.nextDouble();
         double y = rnd.nextDouble();
         return (x * x + y * y <= 1.0) ? 1.0 : 0.0;

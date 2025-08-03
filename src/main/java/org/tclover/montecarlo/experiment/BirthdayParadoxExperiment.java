@@ -1,4 +1,6 @@
-package org.tclover.montecarlo;
+package org.tclover.montecarlo.experiment;
+
+import org.tclover.montecarlo.core.MonteCarloExperiment;
 
 import java.util.HashSet;
 import java.util.SplittableRandom;
@@ -12,7 +14,7 @@ import java.util.SplittableRandom;
  * Repeating this many times and averaging gives an estimate of the probability.
  * </p>
  */
-public class BirthdayParadoxExperiment implements MonteCarloExperiment {
+public class BirthdayParadoxExperiment implements MonteCarloExperiment<Double> {
     private final int groupSize;
     private final int daysInYear;
 
@@ -34,7 +36,7 @@ public class BirthdayParadoxExperiment implements MonteCarloExperiment {
      * @return 1.0 if a duplicate birthday was found, 0.0 otherwise
      */
     @Override
-    public double runTrial(SplittableRandom rnd) {
+    public Double runTrial(SplittableRandom rnd) {
         HashSet<Integer> seen = new HashSet<>();
         for (int i = 0; i < groupSize; i++) {
             int birthday = rnd.nextInt(daysInYear); // day 0 to 364
