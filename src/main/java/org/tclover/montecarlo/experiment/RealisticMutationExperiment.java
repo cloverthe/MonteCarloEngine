@@ -14,13 +14,13 @@ import java.util.Map;
 import java.util.SplittableRandom;
 import java.util.stream.Collectors;
 
-public class RealisticSpikeMutationExperiment implements MonteCarloExperiment<MutationType> {
+public class RealisticMutationExperiment implements MonteCarloExperiment<MutationType> {
 
     private final String rnaSequence;
     private final List<String> codons;
     private final Map<String, String> codonTable;
 
-    public RealisticSpikeMutationExperiment(String fullRnaSequence) {
+    public RealisticMutationExperiment(String fullRnaSequence) {
         this.rnaSequence = fullRnaSequence.toUpperCase().replace("T", "U");
         this.codons = splitIntoCodons(this.rnaSequence);
         this.codonTable = buildCodonTable();
@@ -60,11 +60,29 @@ public class RealisticSpikeMutationExperiment implements MonteCarloExperiment<Mu
     }
 
     public static String loadExampleSpikeRNA() throws IOException {
-        try (InputStream in = RealisticSpikeMutationExperiment.class
+        try (InputStream in = RealisticMutationExperiment.class
                 .getResourceAsStream("/spike_referenceGenome.fasta")) {
 
             if (in == null) {
                 throw new IOException("FASTA file not found: /spike_referenceGenome.fasta");
+            }
+
+            return new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))
+                    .lines()
+                    .map(String::trim)
+                    .filter(line -> !line.isEmpty() && !line.startsWith(">"))
+                    .collect(Collectors.joining())
+                    .toUpperCase()
+                    .replace('T', 'U');
+        }
+    }
+
+    public static String loadExampleSarsRNA() throws IOException {
+        try (InputStream in = RealisticMutationExperiment.class
+                .getResourceAsStream("/sars_fullGenome.fasta")) {
+
+            if (in == null) {
+                throw new IOException("FASTA file not found: /sars_fullGenome.fasta");
             }
 
             return new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))

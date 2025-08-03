@@ -9,13 +9,13 @@ import org.tclover.montecarlo.experiment.RealisticMutationExperiment;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public class MainCovidMutation {
+public class MainSpikeMutation {
     public static void main(String[] args) throws Exception {
         long trials = Integer.MAX_VALUE;
         long seed = 42;
 
         RealisticMutationExperiment experiment =
-                new RealisticMutationExperiment(RealisticMutationExperiment.loadExampleSarsRNA());
+                new RealisticMutationExperiment(RealisticMutationExperiment.loadExampleSpikeRNA());
 
         MonteCarloSimulator<MutationType> simulator = new MonteCarloSimulator<>(experiment, trials, seed);
 
