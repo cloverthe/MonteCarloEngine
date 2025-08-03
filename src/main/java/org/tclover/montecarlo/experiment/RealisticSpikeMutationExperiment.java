@@ -14,10 +14,6 @@ import java.util.Map;
 import java.util.SplittableRandom;
 import java.util.stream.Collectors;
 
-/**
- * A realistic Monte Carlo simulation for modeling point mutations
- * in the mRNA of the SARS-CoV-2 spike protein.
- */
 public class RealisticSpikeMutationExperiment implements MonteCarloExperiment<MutationType> {
 
     private final String rnaSequence;
@@ -96,8 +92,12 @@ public class RealisticSpikeMutationExperiment implements MonteCarloExperiment<Mu
         codon[mutateIndex] = newBase;
         String mutatedCodon = new String(codon);
 
-        String originalAA = codonTable.getOrDefault(originalCodon, "?");
-        String mutatedAA = codonTable.getOrDefault(mutatedCodon, "?");
+        String originalAA = codonTable.get(originalCodon);
+        String mutatedAA = codonTable.get(mutatedCodon);
+
+        if (originalAA == null || mutatedAA == null) {
+            return MutationType.SILENT;
+        }
 
         if (mutatedAA.equals("*")) {
             return MutationType.NONSENSE;
@@ -107,5 +107,4 @@ public class RealisticSpikeMutationExperiment implements MonteCarloExperiment<Mu
             return MutationType.SILENT;
         }
     }
-
 }
