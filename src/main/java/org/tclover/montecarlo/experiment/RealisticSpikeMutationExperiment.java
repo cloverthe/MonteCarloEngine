@@ -3,10 +3,11 @@ package org.tclover.montecarlo.experiment;
 import org.tclover.montecarlo.core.MonteCarloExperiment;
 import org.tclover.montecarlo.core.MutationType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.SplittableRandom;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A realistic Monte Carlo simulation for modeling point mutations
@@ -37,7 +38,7 @@ public class RealisticSpikeMutationExperiment implements MonteCarloExperiment<Mu
     }
 
     private static Map<String, String> buildCodonTable() {
-        return Map.ofEntries(
+        return Map.<String, String>ofEntries(
                 Map.entry("UUU", "F"), Map.entry("UUC", "F"), Map.entry("UUA", "L"), Map.entry("UUG", "L"),
                 Map.entry("CUU", "L"), Map.entry("CUC", "L"), Map.entry("CUA", "L"), Map.entry("CUG", "L"),
                 Map.entry("AUU", "I"), Map.entry("AUC", "I"), Map.entry("AUA", "I"), Map.entry("AUG", "M"),
@@ -57,8 +58,25 @@ public class RealisticSpikeMutationExperiment implements MonteCarloExperiment<Mu
         );
     }
 
-    public static String loadExampleSpikeRNA() {
-        return "AUGUCUUAAUUCAGGUUCCUUUCUUUCUUGUGCAGCCACAGCUUCGGCAGACGGCUUAA";
+    public static String loadExampleSpikeRNA() throws IOException {
+        String sequence;
+        try (InputStream in = RealisticSpikeMutationExperiment.class
+                .getResourceAsStream("/spike_referenceGenome.fasta")) {
+
+            if (in == null) throw new RuntimeException("Failed to load FASTA");
+
+            String content = new String(in.readAllBytes(), StandardCharsets.UTF_8);
+
+            sequence = Arrays.stream(content.split("\\R")) // split by \r, \n, \r\n
+                    .map(String::trim)
+                    .filter(line -> !line.isEmpty())
+                    .filter(line -> !line.startsWith(">"))
+                    .collect(Collectors.joining())
+                    .toUpperCase()
+                    .replace("T", "U");
+        }
+        return sequence;
+
     }
 
     @Override
