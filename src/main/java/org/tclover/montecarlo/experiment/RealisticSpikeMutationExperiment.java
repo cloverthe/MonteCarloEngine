@@ -3,10 +3,15 @@ package org.tclover.montecarlo.experiment;
 import org.tclover.montecarlo.core.MonteCarloExperiment;
 import org.tclover.montecarlo.core.MutationType;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.SplittableRandom;
 import java.util.stream.Collectors;
 
 /**
@@ -59,24 +64,21 @@ public class RealisticSpikeMutationExperiment implements MonteCarloExperiment<Mu
     }
 
     public static String loadExampleSpikeRNA() throws IOException {
-        String sequence;
         try (InputStream in = RealisticSpikeMutationExperiment.class
                 .getResourceAsStream("/spike_referenceGenome.fasta")) {
 
-            if (in == null) throw new RuntimeException("Failed to load FASTA");
+            if (in == null) {
+                throw new IOException("FASTA file not found: /spike_referenceGenome.fasta");
+            }
 
-            String content = new String(in.readAllBytes(), StandardCharsets.UTF_8);
-
-            sequence = Arrays.stream(content.split("\\R")) // split by \r, \n, \r\n
+            return new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))
+                    .lines()
                     .map(String::trim)
-                    .filter(line -> !line.isEmpty())
-                    .filter(line -> !line.startsWith(">"))
+                    .filter(line -> !line.isEmpty() && !line.startsWith(">"))
                     .collect(Collectors.joining())
                     .toUpperCase()
-                    .replace("T", "U");
+                    .replace('T', 'U');
         }
-        return sequence;
-
     }
 
     @Override
