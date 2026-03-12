@@ -94,35 +94,53 @@ public class RealisticMutationExperiment implements MonteCarloExperiment<Mutatio
                     .replace('T', 'U');
         }
     }
-
+    private static char biasedMutation(char original, SplittableRandom rnd) {
+        double r = rnd.nextDouble();
+        return switch (original) {
+            case 'A' -> r < 0.50 ? 'G' : r < 0.75 ? 'U' : 'C';
+            case 'C' -> r < 0.70 ? 'U' : r < 0.85 ? 'A' : 'G';
+            case 'G' -> r < 0.45 ? 'A' : r < 0.75 ? 'U' : 'C';
+            case 'U' -> r < 0.45 ? 'C' : r < 0.75 ? 'A' : 'G';
+            default  -> "ACGU".charAt(rnd.nextInt(4));
+        };
+    }
     @Override
     public MutationType runTrial(SplittableRandom rnd) {
         int codonIndex = rnd.nextInt(codons.size());
         String originalCodon = codons.get(codonIndex);
 
-        char[] codon = originalCodon.toCharArray();
-        int mutateIndex = rnd.nextInt(3);
-        char originalBase = codon[mutateIndex];
-        char newBase;
-        do {
-            newBase = randomBase(rnd);
-        } while (newBase == originalBase);
-        codon[mutateIndex] = newBase;
-        String mutatedCodon = new String(codon);
+        while (true) {
+            char[] codon = originalCodon.toCharArray();
+            int mutateIndex = rnd.nextInt(3);
+            char originalBase = codon[mutateIndex];
+            char newBase = biasedMutation(originalBase, rnd);
+            if (newBase == originalBase) continue;
+            codon[mutateIndex] = newBase;
+            String mutatedCodon = new String(codon);
 
-        String originalAA = codonTable.get(originalCodon);
-        String mutatedAA = codonTable.get(mutatedCodon);
+            String originalAA = codonTable.get(originalCodon);
+            String mutatedAA = codonTable.get(mutatedCodon);
 
-        if (originalAA == null || mutatedAA == null) {
-            return MutationType.SILENT;
-        }
+            if (originalAA == null || mutatedAA == null) {
+                return MutationType.SILENT;
+            }
 
-        if (mutatedAA.equals("*")) {
-            return MutationType.NONSENSE;
-        } else if (!mutatedAA.equals(originalAA)) {
-            return MutationType.MISSENSE;
-        } else {
-            return MutationType.SILENT;
+            MutationType type;
+            if (mutatedAA.equals("*")) {
+                type = MutationType.NONSENSE;
+            } else if (!mutatedAA.equals(originalAA)) {
+                type = MutationType.MISSENSE;
+            } else {
+                type = MutationType.SILENT;
+            }
+
+            // Отбор: если мутация не выживает — пробуем другую мутацию
+            double survivalProb = switch (type) {
+                case SILENT   -> 1.00;
+                case MISSENSE -> 0.55;
+                case NONSENSE -> 0.08;
+            };
+            if (rnd.nextDouble() < survivalProb) return type;
         }
     }
 }
