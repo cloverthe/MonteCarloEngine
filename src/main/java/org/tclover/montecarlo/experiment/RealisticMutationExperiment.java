@@ -34,9 +34,6 @@ public class RealisticMutationExperiment implements MonteCarloExperiment<Mutatio
         return result;
     }
 
-    private static char randomBase(SplittableRandom rnd) {
-        return "ACGU".charAt(rnd.nextInt(4));
-    }
 
     private static Map<String, String> buildCodonTable() {
         return Map.<String, String>ofEntries(
@@ -59,41 +56,35 @@ public class RealisticMutationExperiment implements MonteCarloExperiment<Mutatio
         );
     }
 
-    public static String loadExampleSpikeRNA() throws IOException {
-        try (InputStream in = RealisticMutationExperiment.class
-                .getResourceAsStream("/spike_referenceGenome.fasta")) {
-
-            if (in == null) {
-                throw new IOException("FASTA file not found: /spike_referenceGenome.fasta");
-            }
-
-            return new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))
-                    .lines()
+    private static String loadFasta(String resourcePath) throws IOException {
+        InputStream in = RealisticMutationExperiment.class.getResourceAsStream(resourcePath);
+        if (in == null) {
+            throw new IOException("FASTA file not found: " + resourcePath);
+        }
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
+            return reader.lines()
                     .map(String::trim)
                     .filter(line -> !line.isEmpty() && !line.startsWith(">"))
                     .collect(Collectors.joining())
                     .toUpperCase()
                     .replace('T', 'U');
         }
+    }
+
+    public static String loadExampleSpikeRNA() throws IOException {
+        return loadFasta("/spike_referenceGenome.fasta");
     }
 
     public static String loadExampleSarsRNA() throws IOException {
-        try (InputStream in = RealisticMutationExperiment.class
-                .getResourceAsStream("/sars_fullGenome.fasta")) {
-
-            if (in == null) {
-                throw new IOException("FASTA file not found: /sars_fullGenome.fasta");
-            }
-
-            return new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))
-                    .lines()
-                    .map(String::trim)
-                    .filter(line -> !line.isEmpty() && !line.startsWith(">"))
-                    .collect(Collectors.joining())
-                    .toUpperCase()
-                    .replace('T', 'U');
-        }
+        return loadFasta("/sars_fullGenome.fasta");
     }
+
+    public static String loadOC43() throws IOException {
+        return loadFasta("/oc43_fullGenome.fasta");
+    }
+
+
+
     private static char biasedMutation(char original, SplittableRandom rnd) {
         double r = rnd.nextDouble();
         return switch (original) {
